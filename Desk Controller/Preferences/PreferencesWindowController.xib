@@ -148,14 +148,25 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </box>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gnX-fs-m9E">
-                        <rect key="frame" x="18" y="19" width="205" height="18"/>
+                        <rect key="frame" x="18" y="30" width="229" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="check" title="Open Desk Controller at login" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Llu-P8-H6I">
+                        <buttonCell key="cell" type="check" title="Open Desk Controller at login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="Llu-P8-H6I">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
                             <action selector="toggledOpenAtLoginCheckbox:" target="-2" id="OcY-Tj-57s"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="login-settings-button">
+                        <rect key="frame" x="14" y="3" width="237" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Login Items Settings…" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="login-settings-cell">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="smallSystem"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="openLoginItemsSettings:" target="-2" id="login-settings-action"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zid-bM-9JT">

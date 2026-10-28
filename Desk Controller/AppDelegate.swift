@@ -18,12 +18,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
-        // If it's the first launch set the value for Open at Login to true
-        if Preferences.shared.isFirstLaunch {
-            Preferences.shared.openAtLogin = true
-            Preferences.shared.isFirstLaunch = false
-        }
-        
         // Don't show the icon in the Dock
         NSApp.setActivationPolicy(.accessory)
         

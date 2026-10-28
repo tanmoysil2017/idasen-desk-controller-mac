@@ -23,6 +23,7 @@ profile
 DerivedData/
 build/
 Builds/
+Desk Controller.app/
 
 #####
 # Xcode private settings (window sizes, bookmarks, breakpoints, custom executables, smart groups)

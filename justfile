@@ -6,18 +6,19 @@ app_bundle := build_dir / "Build/Products/Release/Desk Controller.app"
 
 # Build the complete Release app for Apple Silicon and Intel with local signing.
 build:
+    rm -rf '{{app_bundle}}'
     env DEVELOPER_DIR="{{developer_dir}}" xcodebuild \
         -project 'Desk Controller.xcodeproj' \
         -scheme 'Desk Controller' \
         -configuration Release \
         -destination 'generic/platform=macOS' \
         -derivedDataPath '{{build_dir}}' \
-        MACOSX_DEPLOYMENT_TARGET=12.0 \
         ONLY_ACTIVE_ARCH=NO \
         CODE_SIGN_STYLE=Manual \
         CODE_SIGN_IDENTITY=- \
         DEVELOPMENT_TEAM= \
         build
+    bash scripts/verify-native.sh '{{app_bundle}}'
     codesign --verify --deep --strict '{{app_bundle}}'
 
 # Build, then replace the installed app; quit Desk Controller before deploying.

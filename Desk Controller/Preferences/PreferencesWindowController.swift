@@ -6,6 +6,7 @@
 //
 
 import Cocoa
+import ServiceManagement
 
 class PreferencesWindowController: NSWindowController {
     
@@ -46,7 +47,10 @@ class PreferencesWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
         
-        openAtLoginCheckbox.state = Preferences.shared.openAtLogin ? .on : .off
+        updateOpenAtLogin()
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(updateOpenAtLogin),
+            name: NSApplication.didBecomeActiveNotification, object: nil)
         
         unitsPopUpButton.selectItem(at: Preferences.shared.isMetric ? 0 : 1)
         
@@ -63,6 +67,7 @@ class PreferencesWindowController: NSWindowController {
     
     override func showWindow(_ sender: Any?) {
         super.showWindow(sender)
+        updateOpenAtLogin()
         AppDelegate.bringToFront(window: self.window!)
     }
     
@@ -152,8 +157,43 @@ class PreferencesWindowController: NSWindowController {
         updateLabels()
     }
     
+    @objc private func updateOpenAtLogin() {
+        openAtLoginCheckbox.title = "Open Desk Controller at login"
+        openAtLoginCheckbox.isEnabled = true
+        openAtLoginCheckbox.toolTip = nil
+        switch Preferences.shared.openAtLoginStatus {
+        case .enabled:
+            openAtLoginCheckbox.state = .on
+        case .requiresApproval:
+            openAtLoginCheckbox.state = .mixed
+            openAtLoginCheckbox.title = "Open at login (pending)"
+            openAtLoginCheckbox.toolTip = "Approve Desk Controller in Login Items Settings."
+        case .notRegistered:
+            openAtLoginCheckbox.state = .off
+        case .notFound:
+            openAtLoginCheckbox.state = .off
+            openAtLoginCheckbox.isEnabled = false
+            openAtLoginCheckbox.toolTip = "Install Desk Controller in Applications, then reopen it."
+        @unknown default:
+            openAtLoginCheckbox.state = .off
+            openAtLoginCheckbox.isEnabled = false
+        }
+    }
+
     @IBAction func toggledOpenAtLoginCheckbox(_ sender: NSButton) {
-        Preferences.shared.openAtLogin = sender.state == .on
+        let status = Preferences.shared.openAtLoginStatus
+        do {
+            try Preferences.shared.setOpenAtLogin(status != .enabled && status != .requiresApproval)
+        } catch {
+            let alert = NSAlert(error: error)
+            alert.messageText = "Could not change Open at Login"
+            alert.beginSheetModal(for: window!)
+        }
+        updateOpenAtLogin()
+    }
+
+    @IBAction func openLoginItemsSettings(_ sender: Any) {
+        SMAppService.openSystemSettingsLoginItems()
     }
     
     

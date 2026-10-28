@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import LaunchAtLogin
+import ServiceManagement
 
 enum Position {
     case sit, stand, custom(height: Float)
@@ -27,7 +27,6 @@ class Preferences {
     
     private let isMetricKey = "isMetric"
     
-    private let hasLaunched = "hasLaunched"
 
     var standingPosition: Float {
         get {
@@ -130,26 +129,15 @@ class Preferences {
         }
     }
     
-    var openAtLogin: Bool {
-        get {
-            return LaunchAtLogin.isEnabled
-        }
-        set {
-            // print("Saving launch at login: \(newValue)")
-            LaunchAtLogin.isEnabled = newValue
-        }
+    var openAtLoginStatus: SMAppService.Status {
+        return SMAppService.mainApp.status
     }
-    
-    var isFirstLaunch: Bool {
-        get {
-            if let hasLaunchedBefore = UserDefaults.standard.value(forKey: hasLaunched) {
-                return !(hasLaunchedBefore as! Bool)
-            }
-            return true
-        }
-        
-        set {
-            UserDefaults.standard.setValue(!newValue, forKey: hasLaunched)
+
+    func setOpenAtLogin(_ enabled: Bool) throws {
+        if enabled {
+            try SMAppService.mainApp.register()
+        } else {
+            try SMAppService.mainApp.unregister()
         }
     }
 

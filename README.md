@@ -10,7 +10,7 @@ If you find this at least a little bit useful, why don't you help me out by:
 * Follow me on Twitter [@davidwilliames](https://twitter.com/davidwilliames)
 
 
-[**Download latest release**](https://github.com/DWilliames/idasen-controller/releases/latest/download/Desk.Controller.app.zip)
+**macOS 13 or later. Runs natively on Apple Silicon without Rosetta.** Build this fork using the instructions below; the original upstream release still contains a legacy Intel-only login helper.
 
 ---
 
@@ -47,9 +47,9 @@ I'm already on my Mac when sitting/standing at my desk — so why can't I quickl
 
 ## Getting started
 
-* [Download the 'Desk Controller' App](https://github.com/DWilliames/idasen-controller/releases/latest/download/Desk.Controller.app.zip), and move it to your 'Applications' folder
-* Double-click to open it
-* Now it will show up in your Status Bar
+* Install the full Xcode app and [just](https://github.com/casey/just), then run `just deploy` from this repository.
+* Open `/Applications/Desk Controller.app`.
+* The app will appear in your Status Bar. Allow Bluetooth access when prompted.
 
 Other info:
 * To access the preferences either right-click on the Status bar icon and click `Preferences` – or after clicking on the icon, click on the settings icon in the bottom right
@@ -65,12 +65,26 @@ just build
 just deploy
 ```
 
-* `just build` builds the complete Release app, including dependencies and resources, into `build/Build/Products/Release/Desk Controller.app`, then verifies the app and nested helper signatures.
+* `just build` builds the complete Release app into `build/Build/Products/Release/Desk Controller.app`. It rejects any embedded Mach-O binary without an `arm64` slice and verifies the app signature.
 * `just deploy` builds first, then replaces `/Applications/Desk Controller.app` with the new app bundle. Quit Desk Controller before deploying; deployment does not launch it.
 * To install somewhere else, use `just deploy "$HOME/Applications"`.
 * Xcode defaults to `/Applications/Xcode.app`; set `DEVELOPER_DIR` if it is installed elsewhere.
 
-These recipes use ad-hoc signing for local use without the original author's signing credentials, and override the deployment target to macOS 12 for current Xcode compatibility. They do not produce a notarized distribution release or implement the broader macOS compatibility migration.
+These recipes use ad-hoc signing for local use without the original author's signing credentials. The app targets macOS 13 or later and uses Apple's native `SMAppService.mainApp` for launch at login, with no third-party packages or bundled helper executables. The universal main executable also includes Intel support for compatible Macs; Apple Silicon runs its native `arm64` slice without translation.
+
+Builds recreate the output app bundle before linking so old helper files cannot survive an incremental build. The obsolete prebuilt app is no longer checked into this repository. These local builds are not notarized distribution releases; removing Rosetta does not guarantee compatibility with every future macOS release.
+
+### Launch at login and upgrading
+
+Launch at login is now opt-in in Preferences. The checkbox reflects the system's actual registration state; a mixed state marked “pending” means approval is needed. Use **Login Items Settings…** to approve it. Registration failures are shown instead of silently claiming success, and the setting refreshes when returning from System Settings.
+
+When upgrading from the old helper-based app:
+
+1. Quit the old app, then run `just deploy` to replace the complete app bundle.
+2. Remove any old Desk Controller/LaunchAtLoginHelper entry from **System Settings → General → Login Items** if it remains listed.
+3. Open the new app and explicitly enable launch at login again if desired.
+
+The new app does not execute the old helper or copy its registration state. Existing desk heights, units, calibration, and AutoStand preferences keep their original UserDefaults keys.
 
 
 ## Troubleshooting

@@ -1,6 +1,8 @@
 # macOS compatibility investigation and upgrade plan
 
-Status: investigation complete; implementation not started.
+Status: Rosetta-removal cutover implemented. The app now targets macOS 13+, uses native `SMAppService.mainApp`, and has no package dependency or embedded login helper. `just build` rejects Mach-O binaries lacking Apple Silicon support. See README for installation and manual retirement of old login-item entries.
+
+The remaining sections preserve the original investigation and proposed wider compatibility work. Their old paths, build failures, bundled-release assessments, and unimplemented steps describe the pre-migration baseline, not the current source. Bluetooth recovery changes and full hardware/login acceptance remain separate work.
 
 ## Recommendation
 
