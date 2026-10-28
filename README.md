@@ -56,6 +56,23 @@ Other info:
 * To quit the application entirely; right-click on the Status bar icon and click `Quit`
 
 
+## Building from source
+
+Requires the full Xcode app and [just](https://github.com/casey/just) (`brew install just`).
+
+```sh
+just build
+just deploy
+```
+
+* `just build` builds the complete Release app, including dependencies and resources, into `build/Build/Products/Release/Desk Controller.app`, then verifies the app and nested helper signatures.
+* `just deploy` builds first, then replaces `/Applications/Desk Controller.app` with the new app bundle. Quit Desk Controller before deploying; deployment does not launch it.
+* To install somewhere else, use `just deploy "$HOME/Applications"`.
+* Xcode defaults to `/Applications/Xcode.app`; set `DEVELOPER_DIR` if it is installed elsewhere.
+
+These recipes use ad-hoc signing for local use without the original author's signing credentials, and override the deployment target to macOS 12 for current Xcode compatibility. They do not produce a notarized distribution release or implement the broader macOS compatibility migration.
+
+
 ## Troubleshooting
 
 * Make sure no other phones / computers currently have one of the 'Desk Control' apps open and connected to your desk, if you do, simply quit that app, and this Desk Controller app should work
